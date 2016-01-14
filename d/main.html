@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//cdn.bootcss.com/jquery/1.11.1/jquery.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script>
+    $(function(){
+      var username=$.cookie('username');
+      if(!username){
+        window.location.href='./index.html';
+      }
+      var socket = io();
+      socket.username=username;
+      $('#send').click(function(){
+        socket.emit('chat', $('#chat').val());
+        $('#chat').val('');
+      })
+      socket.emit('adduser',username);
+      socket.on('chat', function(rep){
+        console.log(socket);
+        $('#messages').append($('<div>').addClass('well').text(rep.username+':'+rep.msg))
+      });
+      $('#exit').click(function(){
+        $.cookie('username','');
+        window.location.href='./index.html';
+      })
+    })
+         
+    </script>
+  </head>
+  <body>
+    <div id="messages"></div>
+    <input type="text" class="form-control" id="chat">
+    <button type="button" id='exit' class="btn btn-danger">退出</button>
+    <button id="send" class="btn btn-info">发送</button>
+  </body>
+</html>
